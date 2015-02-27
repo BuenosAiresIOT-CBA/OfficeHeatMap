@@ -16,8 +16,8 @@ for (var i = 0; i < channels.length; i++) {
 var chart = circularHeatChart()
 	.domain([0,44])
 	.range(["rgb(118, 218, 233)","red"])
-	.segmentHeight(10)
-	.innerRadius(8);
+	.segmentHeight(4)
+	.innerRadius(5);
 
 
 
@@ -52,23 +52,37 @@ setInterval(function(){
 
 //Cuantas medidas van por circulo?
 var ringLength = 24;
-
+var ringMax = 7;
 
 
 function processData(data){
 	//Obtengo la ultima
 	if (data.feeds.length > 0){
-		var lastIndex = data.feeds.length-1;
-		var lastMeasure = data.feeds[lastIndex];
+		
+		//De la mas nueva a la mas vieja
+		var reverseMeasures = data.feeds.reverse();
+		
 		//Get Dataset
 		var temperatures = datasets[data.channel.id];
 		//Cuantas mediciones hay?
 		ringCount = temperatures.length / ringLength;
 
-		//Lleno el circulo
-		for(var j=0; j<ringLength; j++) {
-			temperatures[j+ringCount*ringLength] = parseInt(lastMeasure.field1); 
+		//Siempre tengo que empujar desde abajo hacia las nuevas
+		if (data.feeds.length > 7){
+			positions = 7;
+		}
+		else{
+			positions = data.feeds.length;
+		}
+		for (var i = 0; i < positions; i++) {
+			var lastMeasure  =reverseMeasures[i];
+			//Lleno el circulo
+			for(var j=0; j<ringLength; j++) {
+				temperatures[j+i*ringLength] = parseInt(lastMeasure.field1); 
+			};	
 		};
+
+		
 		//Aplico
 		d3.select('.spot-' + data.channel.id + ' svg').remove()
 		d3.select('.spot-' + data.channel.id)
