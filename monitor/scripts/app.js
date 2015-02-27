@@ -29,7 +29,7 @@ setInterval(function(){
 	for (var i = 0; i < channels.length; i++) {;
 		var current = channels[i];
 		var TSGetAPI =intro + current + post + timezone;
-		console.log(TSGetAPI);
+		
 		//Ejecutamos un request a ThingsSpeak
 
 		//Como es async hago que se ejecute en si mismo.
@@ -106,10 +106,31 @@ function processData(data){
 		    $('.spot-' +  data.channel.id + ' h1 span').html('');
 		    $('.spot-' +  data.channel.id + ' small').html('');  
 		});
+		var expansionColor = $($('.spot-' +  + data.channel.id + ' svg path')[0]).attr('fill');
+		var color = hexToRgb(expansionColor);
+		var background = 'rgba('+ color.r +','+ color.g +','+ color.b +','+ '0.7)';
+
+		$('.spot.spot-' +  data.channel.id).css('background-color', background);
 
 		
 	}
 }
+
+
+
+
+
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+
 
 	
 
