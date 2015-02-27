@@ -80,8 +80,10 @@ function processData(data){
 			var lastMeasure  =reverseMeasures[i];
 			//Lleno el circulo
 			for(var j=0; j<ringLength; j++) {
+				var at = moment(lastMeasure.created_at).fromNow();
+				console.log(at)
 				temperatures[j+i*ringLength] = 
-				 {title: moment(lastMeasure.created_at, "YYYYMMDD").fromNow(), value: parseInt(lastMeasure.field1)};
+				 {title: at, value: parseInt(lastMeasure.field1)};
 			};	
 		};
 
