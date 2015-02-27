@@ -4,38 +4,24 @@ var intro = 'http://api.thingspeak.com/channels/'
 var post = '/feed.json';
 var channels = [28024, 28027, 28029, 28030];
 
+//Inicializo datasets
+var datasets = [];
+for (var i = 0; i < channels.length; i++) {
+	datasets[channels[i]] = [];
+};
 
+
+//Inicializo visualizacion.
 //http://prcweb.co.uk/lab/circularheat/
-
-/* Create random data */
-var data = [];
-
-
 var chart = circularHeatChart()
 	.domain([0,44])
 	.range(["rgb(118, 218, 233)","red"])
 	.segmentHeight(10)
 	.innerRadius(8);
 
-var data = [];
-var ringLength = 24;
-var measures = 20;
-var t = 0;
-for (var i= 0; i < measures; i++) {
-	for(var j=0; j<ringLength; j++) {
-		data[j+i*ringLength] = t + i; 
-	}
 
-};
 
-d3.select('#chart2')
-    .selectAll('svg')
-    .data([data])
-    .enter()
-    .append('svg')
-    .call(chart);
-
-//TODO: Reemplazar
+//Busco a ThingsSpeak las temperaturas cada 15 segundos
 setInterval(function(){
 
 	//Para cada uno de los canales
@@ -47,17 +33,7 @@ setInterval(function(){
 		//Como es async hago que se ejecute en si mismo.
 		(function(TSGetAPI, current){
 			$.get(TSGetAPI, function(data) {
-				//Obtengo la ultima
-				if (data.feeds.length > 0){
-					var lastIndex = data.feeds.length-1;
-					var lastMeasure = data.feeds[lastIndex];
-					//La aplico en el div.
-
-
-
-
-					$('.spot-' + current + ' h1').html(lastMeasure.field1);
-				}
+				processData(data);
 		   }).done(function(){
 
 			}).fail(function(e){
@@ -68,9 +44,48 @@ setInterval(function(){
 	};
 	
 
-},4000);
-function randomRange(min, max)
-{
-   var range = (max - min) + 1;     
-   return (Math.random() * range) + min;
+},1500);
+
+
+
+
+
+//Cuantas medidas van por circulo?
+var ringLength = 24;
+
+
+
+function processData(data){
+	//Obtengo la ultima
+	if (data.feeds.length > 0){
+		var lastIndex = data.feeds.length-1;
+		var lastMeasure = data.feeds[lastIndex];
+		//Get Dataset
+		var temperatures = datasets[data.channel.id];
+		//Cuantas mediciones hay?
+		ringCount = temperatures.length / ringLength;
+
+		//Lleno el circulo
+		for(var j=0; j<ringLength; j++) {
+			temperatures[j+ringCount*ringLength] = parseInt(lastMeasure.field1); 
+		};
+		//Aplico
+		d3.select('.spot-' + data.channel.id + ' svg').remove()
+		d3.select('.spot-' + data.channel.id)
+		    .selectAll('svg')
+		    .data([temperatures])
+		    .enter()
+		    .transition()
+		    .append('svg')
+		    .attr('viewBox','0 0 100 100')
+		    .attr('preserveAspectRatio','xMinYMin')
+		    .call(chart);
+
+		//La aplico en el div.
+		// $('.spot-' + current + ' h1').html(lastMeasure.field1);
+	}
 }
+
+	
+
+
