@@ -3,7 +3,7 @@
 var intro = 'http://api.thingspeak.com/channels/'
 var post = '/feed.json';
 var timezone = '?timezone=America%2FArgentina%2FBuenos_Aires';
-var channels = [28024, 28027, 28029, 28030];
+var channels = [28024, 28027, 28029];
 
 //Inicializo datasets
 var datasets = [];
