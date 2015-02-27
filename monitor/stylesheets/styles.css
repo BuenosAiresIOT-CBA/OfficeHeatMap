@@ -2,3 +2,11 @@ svg{
 	width: 100%;
 	height: 350px;
 }
+
+.infobox{
+	position: absolute;
+}
+
+h1 small{
+	font-size: 0.4em;
+}
