@@ -10,3 +10,8 @@ svg{
 h1 small{
 	font-size: 0.4em;
 }
+
+div.navbar{
+	background: #3949ab;
+	color:white;
+}
