@@ -75,7 +75,6 @@ function processData(data){
 		    .selectAll('svg')
 		    .data([temperatures])
 		    .enter()
-		    .transition()
 		    .append('svg')
 		    .attr('viewBox','0 0 100 100')
 		    .attr('preserveAspectRatio','xMinYMin')
